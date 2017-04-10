@@ -1,36 +1,26 @@
-%% Assign Weight
-%weight_var = -1/mean(AverageVariability);
-%weight_demand = 1/mean(Avg_Traffic);
-weight_var_multiplier = 1
-weight_demand_multiplier = 1
-
-
-%% Set Parameters
-max_hours_per_week = 8; % Maximum number of hours a driver can work per week
-time_slot_available = ones(7,24); % Represent the timeslot when the driver is available
-%time_slot_available(2,:) = 0;
-%time_slot_available(4,:) = 0;
-%time_slot_available(6:7,:) = 0;
-%time_slot_available(:,1:18) = 0;
-
-region_avilable = ones(5,1); % Indicate which of the 5 regions the driver is avilable to go
-% Store datasets
-%Weekday_Copy = Weekday;
-%Timeslot_Copy = Timeslot;
-%Avg_Var_Copy = AverageVariability;
-%Avg_Demand_Copy = Avg_Traffic;
-%Region_Copy = Region;
-
-% Restore datasets
-Weekday = Weekday_Copy;
-Timeslot = Timeslot_Copy;
-AverageVariability = Avg_Var_Copy;
-Avg_Traffic = Avg_Demand_Copy;
-Region = Region_Copy;
-
+function [x] = Solve_IP(max_hours_per_week,time_slot_available,region_avilable,weight_var_multiplier,weight_demand_multiplier)
+%% This function solve the IP Model of Uber Driver Scheduling Problem
+% max_hours_per_week: Maximum number of hours the driver can contribute per
+% week
+% time_slot_available: a 7*24 matrix to indicate the driver's availablility
+% in each hour of a week. 1 indicates available and 0 indicates not
+% Region_available: a 1*5 vector indicates which region the driver likes
+% to drive in; 1 indicates like and 0 indicates dislike
+% weight_var_multiplier: multiplier used to adjust the weight of variability
+% weight_demand_multiplier: multiplier used to adjust the weight of demand
 
 %% Import Data
 % Right click on the "Data_Demand_Variability.csv", select "Import Data"
+T = readtable('Data_Demand_Variability.csv');
+% Get Column Names
+% T.Properties.VariableNames
+
+% Store each column as a varaible
+Weekday = T.Weekday;
+Timeslot = T.Timeslot;
+AverageVariability = T.AverageVariability;
+Avg_Traffic = T.Avg_Traffic;
+Region = T.Region;
 
 %% Adjust the data based on the given parameters - driver's preference
 weekday_choices = 1:7;
@@ -131,17 +121,3 @@ for i = 1:sum(x)
     string_output = ['Recommendation ' num2str(i) ': Region ' num2str(select_region) ', ' timeslot ', ' weekday_name];
     disp(string_output)
 end
-%% Example IP Solver - Minimize the cost
-%  vector of cost coefficients
-%f = [350*5,330*3,310*4,280*6,500,450,400,100];
-% Integer Variables
-%intcon = 1:4;
-%Aeq = [5,3,4,6,1,1,1,1;
-%    5*0.05,3*0.04,4*0.05,6*0.03,0.08,0.07,0.06,0.03;
-%    5*0.03,3*0.03,4*0.04,6*0.04,0.06,0.07,0.08,0.09];
-%beq = [25;1.25;1.25];
-%lb = zeros(8,1);
-%ub = ones(8,1);
-%ub(5:end) = Inf; % No upper bound on noninteger variables
-%[x,fval] = intlinprog(f,intcon,A,b,Aeq,beq,lb,ub);
-%[x,fval] = intlinprog(f,intcon,[],[],Aeq,beq,lb,ub);
