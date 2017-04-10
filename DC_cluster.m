@@ -1,4 +1,4 @@
-T = readtable('Aggregated_Traffic_Demand_Season_1.csv');
+T = readtable('DC_Cab_Pickup/Aggregated_Traffic_Demand_Season_1.csv');
 
 [n,zz] = size(T);
 coordinates = T;
