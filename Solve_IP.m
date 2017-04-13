@@ -30,7 +30,8 @@ P_new_customer = Cvt_Traffic_Probability(Avg_Traffic,p_max,p_min);
 %% Convert Max_Duration to Minimum Trips per Hour
 % Max_Duration is the average Max Duration of Trips within that region &
 % time slot. It is recorded on second. 
-Min_Trips = 3600./Max_Duration;
+% The timeslots are at the unit of 2 hours
+Min_Trips = 7200./Max_Duration;
 
 %% Adjust the data based on the given parameters - driver's preference
 weekday_choices = 1:7;
