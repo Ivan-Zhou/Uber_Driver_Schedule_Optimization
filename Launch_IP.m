@@ -9,10 +9,10 @@ time_slot_available = ones(7,24); % Represent the timeslot when the driver is av
 
 region_avilable = ones(5,1); % Indicate which of the 5 regions the driver is avilable to go
 
+avg_revenue_trip = 12; % Average Revenue the Driver get per trip
+p_max = 1; % Maximum Probability that the Driver can get customers - best case scenario
+p_min = 0.5; % Minimum Probability that the Driver can get customers - worse case scenario
 
-%% Adjust Weight Multiplier
-weight_var_multiplier = 1;
-weight_demand_multiplier = 1;
 
 %% Launch the IP Solver
-[x] = Solve_IP(max_hours_per_week,time_slot_available,region_avilable,weight_var_multiplier,weight_demand_multiplier);
+[x] = Solve_IP(max_hours_per_week,time_slot_available,region_avilable,avg_revenue_trip,p_max,p_min);

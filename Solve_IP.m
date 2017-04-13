@@ -1,4 +1,4 @@
-function [x] = Solve_IP(max_hours_per_week,time_slot_available,region_avilable,weight_var_multiplier,weight_demand_multiplier)
+function [x] = Solve_IP(max_hours_per_week,time_slot_available,region_avilable,avg_revenue_trip,p_max,p_min)
 %% This function solve the IP Model of Uber Driver Scheduling Problem
 % max_hours_per_week: Maximum number of hours the driver can contribute per
 % week
@@ -11,16 +11,26 @@ function [x] = Solve_IP(max_hours_per_week,time_slot_available,region_avilable,w
 
 %% Import Data
 % Right click on the "Data_Demand_Variability.csv", select "Import Data"
-T = readtable('Data_Demand_Variability.csv');
+T = readtable('Data/Processed_Data/Data_Demand_Variability.csv');
 % Get Column Names
 % T.Properties.VariableNames
 
 % Store each column as a varaible
 Weekday = T.Weekday;
 Timeslot = T.Timeslot;
-AverageVariability = T.AverageVariability;
+%AverageVariability = T.AverageVariability;
+Max_Duration = T.AverageMax;
 Avg_Traffic = T.Avg_Traffic;
 Region = T.Region;
+
+%% Convert Traffic into Probability of Getting new Customers
+% P_new_customer is a vertical vector of the same size with Avg_Traffic
+P_new_customer = Cvt_Traffic_Probability(Avg_Traffic,p_max,p_min);
+
+%% Convert Max_Duration to Minimum Trips per Hour
+% Max_Duration is the average Max Duration of Trips within that region &
+% time slot. It is recorded on second. 
+Min_Trips = 3600./Max_Duration;
 
 %% Adjust the data based on the given parameters - driver's preference
 weekday_choices = 1:7;
@@ -62,19 +72,18 @@ if sum(indices_to_be_rm) >0
         ind = ind_to_be_removed(i);
         Weekday(ind) = [];
         Timeslot(ind) = [];
-        AverageVariability(ind) = [];
-        Avg_Traffic(ind) = [];
+        Min_Trips(ind) = [];
+        P_new_customer(ind) = [];
         Region(ind) = [];
     end
 end
 
 % Number of variables
-n_x = size(AverageVariability,1);
+n_x = size(Min_Trips,1);
 %% Formulate the IP
-weight_var = -1/mean(AverageVariability)*weight_var_multiplier;
-weight_demand = 1/mean(Avg_Traffic)*weight_demand_multiplier;
 %  A vector of cost coefficients
-f = transpose(weight_var.*AverageVariability + weight_demand.*Avg_Traffic);
+% Probability of Getting new Customer * Average Trips/Hour
+f = transpose(P_new_customer.*Min_Trips).*avg_revenue_trip;
 % Integer Variables
 intcon = 1:n_x;
 
@@ -119,5 +128,12 @@ for i = 1:sum(x)
     weekday_name = day(day_number_benchmark+select_day,'name');
     timeslot = timeslots(select_time +1);
     string_output = ['Recommendation ' num2str(i) ': Region ' num2str(select_region) ', ' timeslot ', ' weekday_name];
+    
+    %p_new = P_new_customer(select_list(i));
+    %min_trip = Min_Trips(select_list(i));
+    %string_output = ['Recommendation ' num2str(i) ': Region ' num2str(select_region) ', ' timeslot ', ' weekday_name ', ' p_new  ', ' min_trip];
     disp(string_output)
 end
+
+string_output = ['Total Revenue Earned: ' num2str(-1*fval)];
+disp(string_output)
