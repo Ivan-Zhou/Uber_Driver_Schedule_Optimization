@@ -21,8 +21,7 @@ p_min = 0.5; % Minimum Probability that the Driver can get customers - worse cas
 n_regions = 5; % Number of regions
 region_loop = 1:n_regions;
 count_out = 0; % Initialize the count of the outer loop
-count_in = 0; % Initialize the count of the inner loop
-n_iters = 10; % Run multiple times to get a stable result
+n_iters = 500; % Run multiple times to get a stable result
 obj_iters = zeros(1,n_iters); % List to record the obj result in each iteration
 time_iters = zeros(1,n_iters);% List to record the time result in each iteration
 obj_list = zeros(1,n_regions); % Intialize the list to record the objective function
@@ -30,6 +29,7 @@ time_list = zeros(1,n_regions); % Intialize the list to record the objective fun
 
 cd .. % Direct to the outside folder
 for i = region_loop
+    count_in = 0; % Initialize the count of the inner loop
     for j = 1:n_iters
         % Randomly select i elements in the region_available and set as 1
         perm_ind = randperm(n_regions);
@@ -42,6 +42,7 @@ for i = region_loop
         time_iters(count_in) = time_ip;
     end
     % Record the result in the list
+    
     count_out = count_out+1;
     obj_list(count_out) = mean(obj_iters);
     time_list(count_out) = mean(time_iters);
