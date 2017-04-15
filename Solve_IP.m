@@ -40,19 +40,20 @@ timeslot_choices = [0 1 2 3 4 5]; % Timeslots that cooresponds to the above time
 n_weekdays_choices = size(weekday_choices,2);
 % n_timeslot_choices = size(weekday_choices,2);
 n_timeslot_choices = size(timeslot_choices,2);
-
+n_weekdays = 7; % Number of weekdays
 % Initialize indices of element to be removed: all are 0 in the beginning
 indices_to_be_rm = zeros(size(Weekday));
-for d = weekday_choices
-    for t = time_choices
-        if time_slot_available(d,t+1) == 0 % Mark as in-available
+for d = weekday_choices % Row
+    for t = time_choices % Column
+        if time_slot_available(d,t+1) == 0 % Mark as un-available
            % Find the timeslot and weekday that cooresponding to that hour
            t_ind = find(time_choices==t);
-           if mod(t_ind,2) == 0
-               timeslot_to_be_rm = timeslot_choices(floor(find(time_choices==t)/2));
-           else
-               timeslot_to_be_rm = timeslot_choices(floor(find(time_choices==t)/2)+1);
-           end
+           timeslot_to_be_rm = timeslot_choices(floor((find(time_choices==t)-1)/2)+1)+1;
+           %if mod(t_ind,2) == 0
+           %    timeslot_to_be_rm = timeslot_choices(floor(find(time_choices==t)/2));
+           %else
+           %    timeslot_to_be_rm = timeslot_choices(floor(find(time_choices==t)/2)+1);
+           %end
            weekday_to_be_rm = d;
            % Mark the indices of the elements to be removed
            indices_to_be_rm(Weekday == weekday_to_be_rm & Timeslot == timeslot_to_be_rm) = 1;
@@ -89,6 +90,7 @@ end
 % Number of variables
 n_x = size(Min_Trips,1);
 %% Formulate the IP
+tic;
 %  A vector of cost coefficients
 % Probability of Getting new Customer * Average Trips/Hour
 f = transpose(P_new_customer.*Min_Trips).*avg_revenue_trip;
@@ -105,6 +107,7 @@ A2 = zeros(n_weekdays_choices*n_timeslot_choices,n_x);
 b2 = ones(n_weekdays_choices*n_timeslot_choices,1); % Upper limit should be 1
 
 row_count = 0;
+
 for d = weekday_choices
     for t = timeslot_choices
         row_count = row_count+1;
@@ -117,7 +120,7 @@ A = [A1;A2];
 b = [b1;b2];
 lb = zeros(n_x,1); 
 ub = ones(n_x,1);
-tic;
+
 [x,fval] = intlinprog(-f,intcon,A,b,[],[],lb,ub);
 time_ip = toc;
 obj_ip = -1*fval;
