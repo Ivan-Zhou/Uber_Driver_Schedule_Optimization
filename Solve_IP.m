@@ -90,7 +90,6 @@ end
 % Number of variables
 n_x = size(Min_Trips,1);
 %% Formulate the IP
-tic;
 %  A vector of cost coefficients
 % Probability of Getting new Customer * Average Trips/Hour
 f = transpose(P_new_customer.*Min_Trips).*avg_revenue_trip;
@@ -120,7 +119,7 @@ A = [A1;A2];
 b = [b1;b2];
 lb = zeros(n_x,1); 
 ub = ones(n_x,1);
-
+tic;
 [x,fval] = intlinprog(-f,intcon,A,b,[],[],lb,ub);
 time_ip = toc;
 obj_ip = -1*fval;

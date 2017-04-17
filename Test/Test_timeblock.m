@@ -24,7 +24,7 @@ p_min = 0.5; % Minimum Probability that the Driver can get customers - worse cas
 time_block_available = 2:2:n_weekday*n_hour;
 n_test = size(time_block_available,2);
 count_out = 0; % Initialize the count of the outer loop
-n_iters = 400; % Run multiple times to get a stable result
+n_iters = 500; % Run multiple times to get a stable result
 obj_iters = zeros(1,n_iters); % List to record the obj result in each iteration
 time_iters = zeros(1,n_iters);% List to record the time result in each iteration
 obj_list = zeros(1,n_test); % Intialize the list to record the objective function
@@ -66,13 +66,12 @@ cd Test_Result % Store the images in the Test Result
 % plot the objective value
 hold on
 plot(time_block_available./2,obj_list,'-r*');
-legend('Obj Value');
-
-title('Objective Value Achieved with Different Number of Time Blocks')
-xlabel('The Number of Available Time Blocks to be Selected')
-ylabel('The Optimal Revenue Earned in 8 Hours($)')
+legend('off');
 grid
-legend('show')
+set(gca,'fontsize',18)
+title('The Optimal Revenue Earned Per Week','fontsize',20)
+xlabel('The Number of Available Time Blocks','fontsize',20)
+ylabel('The Optimal Revenue ($)','fontsize',20)
 hold off
 saveas(gcf,'timeblock_obj.png');
 close
@@ -80,13 +79,12 @@ close
 % plot the Time
 hold on
 plot(time_block_available./2,time_list,'-b*');
-legend('Time');
-
-title('Computation Time Costed with Different Number of Time Blocks')
-xlabel('The Number of Available Time Blocks to be Selected')
-ylabel('The (Average) Computation Time')
+legend('off');
 grid
-legend('show')
+set(gca,'fontsize',18)
+title('The Computation Time','fontsize',20)
+xlabel('The Number of Available Time Blocks','fontsize',20)
+ylabel('The (Average) Computation Time','fontsize',20)
 hold off
 saveas(gcf,'timeblock_time.png');
 close

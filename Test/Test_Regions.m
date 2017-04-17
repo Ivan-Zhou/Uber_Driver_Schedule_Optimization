@@ -57,13 +57,12 @@ cd Test_Result % Store the images in the Test Result
 % plot the objective value
 hold on
 plot(region_loop,obj_list,'-r*');
-legend('Obj Value');
-
-title('Objective Value Achieved with Different Number of Regions')
-xlabel('The Number of Regions to be Selected')
-ylabel('The Optimal Revenue Earned in 8 Hours($)')
 grid
-legend('show')
+legend('off')
+set(gca,'fontsize',18)
+title('The Optimal Revenue Earned Per Week','fontsize',20)
+xlabel('The Number of Regions','fontsize',20)
+ylabel('The Optimal Revenue ($)','fontsize',20)
 hold off
 saveas(gcf,'regions_obj.png');
 close
@@ -71,13 +70,12 @@ close
 % plot the Time
 hold on
 plot(region_loop,time_list,'-b*');
-legend('Time');
-
-title('Computation Time Costed with Different Number of Regions')
-xlabel('The Number of Regions to be Selected')
-ylabel('The (Average) Computation Time')
+legend('off');
 grid
-legend('show')
+set(gca,'fontsize',18)
+title('The Computation Time','fontsize',20)
+xlabel('The Number of Regions','fontsize',20)
+ylabel('The (Average) Computation Time','fontsize',20)
 hold off
 saveas(gcf,'regions_time.png');
 close

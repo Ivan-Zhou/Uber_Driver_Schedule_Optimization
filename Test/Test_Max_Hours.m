@@ -20,7 +20,7 @@ p_min = 0.5; % Minimum Probability that the Driver can get customers - worse cas
 
 %% Run the Test
 count_out = 0; % Initialize the count of the outer loop
-n_iters = 400; % Run multiple times to get a stable result
+n_iters = 500; % Run multiple times to get a stable result
 obj_iters = zeros(1,n_iters); % List to record the obj result in each iteration
 time_iters = zeros(1,n_iters);% List to record the time result in each iteration
 obj_list = zeros(1,n_max_hours); % Intialize the list to record the objective function
@@ -53,13 +53,12 @@ cd Test_Result % Store the images in the Test Result
 % plot the objective value
 hold on
 plot(max_hour_list,obj_list,'-r*');
-legend('Obj Value');
-
-title('Objective Value Achieved with Different Max Number of Hours')
-xlabel('The Max Number of Hours (Per Week)')
-ylabel('The Optimal Revenue Earned in a week($)')
+legend('off');
 grid
-legend('show')
+
+title('The Optimal Revenue Earned Per Week','fontsize',20)
+xlabel('The Max Number of Hours (Per Week)','fontsize',20)
+ylabel('The Optimal Revenue($)','fontsize',20)
 hold off
 saveas(gcf,'max_hours_obj.png');
 close
@@ -67,13 +66,12 @@ close
 % plot the Time
 hold on
 plot(max_hour_list,time_list,'-b*');
-legend('Time');
-
-title('Computation Time Costed with Different Max Number of Hours')
-xlabel('The Max Number of Hours (Per Week)')
-ylabel('The (Average) Computation Time')
+legend('off');
 grid
-legend('show')
+set(gca,'fontsize',18)
+title('The Computation Time','fontsize',20)
+xlabel('The Max Number of Hours (Per Week)','fontsize',20)
+ylabel('The (Average) Computation Time','fontsize',20)
 hold off
 saveas(gcf,'max_hours_time.png');
 close
